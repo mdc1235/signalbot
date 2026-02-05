@@ -1,21 +1,28 @@
+
 import telebot
 import random
 import time
+import os
 
-TOKEN = "8012086587:AAGj86wGPXX8OEPfxghs3_2NamaI3sTnC7A"
+TOKEN = os.getenv("BOT_TOKEN")
 bot = telebot.TeleBot(TOKEN)
 
 @bot.message_handler(commands=['start'])
 def start(msg):
-    bot.send_message(msg.chat.id,"Welcome to VIP Trading Signal Bot 📊")
+    bot.send_message(msg.chat.id,"🔥 VIP Signal Bot Started 🔥")
 
-while True:
-    signal = random.choice(["UP 📈","DOWN 📉"])
-    text = f"🔥 1 MIN SIGNAL\nSignal: {signal}\nEntry: Next candle"
-    try:
-        bot.send_message(msg.chat.id,text)
-    except:
-        pass
-    time.sleep(60)
+    while True:
+        signal = random.choice(["UP 📈","DOWN 📉"])
+        pair = random.choice(["EUR/USD","GBP/USD","USD/JPY","AUD/USD"])
 
-bot.polling()
+        text = f"🔥 1 MIN SIGNAL\n\nPair: {pair}\nSignal: {signal}"
+
+        try:
+            bot.send_message(msg.chat.id,text)
+        except:
+            pass
+
+        time.sleep(60)
+
+print("Bot running...")
+bot.infinity_polling()
