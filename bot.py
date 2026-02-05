@@ -3,7 +3,7 @@ from telegram.ext import Updater, CommandHandler
 import random, time, threading
 from datetime import datetime
 
-TOKEN = "8012086587:AAE6IgMbSe-vTAvzkAlodZtqjZe0Q5x_dWU"
+TOKEN = 8012086587:AAE6IgMbSe-vTAvzkAlodZtqjZe0Q5x_dWU
 CHAT_ID = "6181352243"
 
 bot = Bot(token=TOKEN)
