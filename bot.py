@@ -1,73 +1,70 @@
-import telebot
-import random
-import time
-import threading
+from telegram import Bot
+from telegram.ext import Updater, CommandHandler
+import random, time, threading
 from datetime import datetime
 
-BOT_TOKEN = "8012086587:AAE6IgMbSe-vTAvzkAlodZtqjZe0Q5x_dWU"
+TOKEN = "8012086587:AAE6IgMbSe-vTAvzkAlodZtqjZe0Q5x_dWU"
 CHAT_ID = "6181352243"
 
-bot = telebot.TeleBot(BOT_TOKEN)
-
-SIGNALS_PER_SLOT = 4
-GAP = 120
+bot = Bot(token=TOKEN)
 
 pairs = ["EUR/USD","GBP/USD","USD/JPY","AUD/USD","USD/CHF"]
-directions = ["UP 📈","DOWN 📉"]
+dirs = ["UP 📈","DOWN 📉"]
 
-@bot.message_handler(commands=['start'])
-def start(msg):
-    bot.reply_to(msg,"🔥 VIP Signal Bot Started 🔥")
+def start(update, context):
+    update.message.reply_text("🔥 VIP Signal Bot Started 🔥")
 
-def send_result(pair,direction):
-    result = random.choices(["WIN ✅","LOSS ❌"], weights=[90,10])[0]
-    bot.send_message(CHAT_ID,f"🏆 Result: {pair} {direction} → {result}")
+def send_result(pair,dir):
+    result=random.choices(["WIN ✅","LOSS ❌"],weights=[90,10])[0]
+    bot.send_message(chat_id=CHAT_ID,text=f"🏆 Result: {pair} {dir} → {result}")
 
 def send_signals():
-    for i in range(SIGNALS_PER_SLOT):
+    for i in range(4):
         pair=random.choice(pairs)
-        direction=random.choice(directions)
-
-        now=datetime.now()
-        entry=now.strftime("%I:%M %p")
+        direction=random.choice(dirs)
+        now=datetime.now().strftime("%I:%M %p")
 
         msg=f"""
 🔥 VIP SIGNAL 🔥
-
 Pair: {pair}
 Signal: {direction}
 Candle: 1 MIN
-Entry Time: {entry}
+Entry: {now}
 Expiry: 1 MIN
 """
-        bot.send_message(CHAT_ID,msg)
+        bot.send_message(chat_id=CHAT_ID,text=msg)
 
-        threading.Timer(60, send_result, args=(pair,direction)).start()
-
-        if i<SIGNALS_PER_SLOT-1:
-            time.sleep(GAP)
+        threading.Timer(60,send_result,args=(pair,direction)).start()
+        time.sleep(120)
 
 def scheduler():
-    sent_morning=False
-    sent_night=False
+    sent_m=False
+    sent_n=False
     while True:
         now=datetime.now()
 
-        if now.hour==10 and now.minute==30 and not sent_morning:
+        if now.hour==10 and now.minute==30 and not sent_m:
             send_signals()
-            sent_morning=True
+            sent_m=True
 
-        if now.hour==21 and now.minute==0 and not sent_night:
+        if now.hour==21 and now.minute==0 and not sent_n:
             send_signals()
-            sent_night=True
+            sent_n=True
 
         if now.hour==0 and now.minute==1:
-            sent_morning=False
-            sent_night=False
+            sent_m=False
+            sent_n=False
 
         time.sleep(20)
 
-threading.Thread(target=scheduler).start()
+def main():
+    updater = Updater(TOKEN,use_context=True)
+    dp = updater.dispatcher
+    dp.add_handler(CommandHandler("start", start))
 
-print("Bot running...")
-bot.infinity_polling(skip_pending=True)
+    threading.Thread(target=scheduler).start()
+
+    updater.start_polling()
+    updater.idle()
+
+main()
