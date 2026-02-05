@@ -6,7 +6,7 @@ import threading
 from datetime import datetime, timedelta
 import os
 
-BOT_TOKEN = os.getenv("8012086587:AAHS)
+BOT_TOKEN = os.getenv("8012086587:AAHSvIvCxqmWVH2mbjIxlWap7_LYeRGGnA0")
 CHAT_ID = "6181352243"
 
 bot = telebot.TeleBot(BOT_TOKEN)
