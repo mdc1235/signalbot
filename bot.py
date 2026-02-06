@@ -3,8 +3,9 @@ import os
 import telebot
 import random
 import time
-from datetime import datetime, timedelta
 import threading
+import pytz
+from datetime import datetime, timedelta
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHAT_ID = "6181352243"
@@ -21,7 +22,8 @@ def start(msg):
     bot.reply_to(
         msg,
         "🔥 <b>VIP SIGNAL BOT STARTED</b>\n\n"
-        "⏱ Entry time ke sath signals aayenge\n"
+        "🇮🇳 India time signals\n"
+        "⏱ Entry time ke sath signal\n"
         "📊 REAL / OTC MARKET\n"
         "💹 Pocket Option"
     )
@@ -32,8 +34,9 @@ def send_signal():
     market = random.choice(markets)
     platform = random.choice(platforms)
 
-    # time system
-    signal_time = datetime.now()
+    # 🇮🇳 India timezone
+    ist = pytz.timezone('Asia/Kolkata')
+    signal_time = datetime.now(ist)
     entry_time = signal_time + timedelta(minutes=1)
 
     text = (
