@@ -3,7 +3,8 @@ import os
 import telebot
 import random
 import time
-from datetime import datetime
+
+from datetime import datetime, timedelta
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHAT_ID = "6181352243"
@@ -15,7 +16,7 @@ bot = telebot.TeleBot(BOT_TOKEN, parse_mode="HTML")
 
 pairs = ["EUR/USD", "GBP/USD", "USD/JPY", "AUD/USD", "USD/CHF"]
 markets = ["REAL MARKET", "OTC"]
-platforms = ["Pocket Option", "Quotex"]
+platforms = ["Pocket Option"
 directions = ["UP 📈", "DOWN 📉"]
 
 @bot.message_handler(commands=["start"])
@@ -25,7 +26,7 @@ def start(msg):
         "🔥 <b>VIP SIGNAL BOT STARTED</b>\n\n"
         "⏰ Entry time ke sath signals aayenge\n"
         "📊 OTC / REAL MARKET\n"
-        "💹 Pocket Option / Quotex"
+        "💹 Pocket Option 
     )
 
 def send_signal():
@@ -34,24 +35,25 @@ def send_signal():
     market = random.choice(markets)
     platform = random.choice(platforms)
 
-    entry_time = datetime.now().strftime("%I:%M %p")
+    signal_time = datetime.now()
+entry_time = signal_time + timedelta(minutes=1)
 
     text = (
-        f"📊 <b>{platform}</b>\n"
-        f"🟡 <b>{market}</b>\n\n"
-        f"💱 Pair: <b>{pair}</b>\n"
-        f"📈 Direction: <b>{direction}</b>\n"
-        f"⏰ Entry Time: <b>{entry_time}</b>\n\n"
-        f"⏳ Timeframe: 1 Minute"
-    )
+f"📊 <b>{platform}</b>\n"
+f"🟡 <b>{market}</b>\n\n"
+f"💱 Pair: <b>{pair}</b>\n"
+f"📈 Direction: <b>{direction}</b>\n\n"
+f"🕒 Signal Time: <b>{signal_time.strftime('%H:%M:%S')}</b>\n"
+f"⏰ Entry Time: <b>{entry_time.strftime('%H:%M:%S')}</b>\n"
+f"⌛ Expiry: 1 Minute"
+)
 
     bot.send_message(CHAT_ID, text)
 
 def loop():
     while True:
         send_signal()
-        time.sleep(120)  # 2 minutes gap
-
+        time.sleep(60) 
 import threading
 threading.Thread(target=loop).start()
 
